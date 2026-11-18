@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>https://ui.zweers.ch/sitemap-main.xml</loc>
+    <lastmod>2026-10-01T07:55:56+00:00</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://ui.zweers.ch/sitemap-components.xml</loc>
+    <lastmod>2026-10-01T07:55:56+00:00</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://ui.zweers.ch/sitemap-blocks.xml</loc>
+    <lastmod>2026-10-01T07:55:56+00:00</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://ui.zweers.ch/sitemap-hooks.xml</loc>
+    <lastmod>2026-10-01T07:55:56+00:00</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://ui.zweers.ch/sitemap-articles.xml</loc>
+    <lastmod>2026-10-25T00:00:00+00:00</lastmod>
+  </sitemap>
+</sitemapindex>

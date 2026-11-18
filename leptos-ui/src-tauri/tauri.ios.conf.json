@@ -1,0 +1,21 @@
+{
+  "identifier": "ch.zweers.nrzui",
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "url": "https://leptos.ui.zweers.ch"
+      }
+    ]
+  },
+  "bundle": {
+    "iOS": {
+      "developmentTeam": "4JGPL5Q5CD",
+      "minimumSystemVersion": "14.0"
+    }
+  }
+}

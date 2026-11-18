@@ -1,0 +1,18 @@
+[files]
+extend-exclude = ["public/cdn/*", "leptos-ui/**", "**/PLAN_*", "**/*.webp"]
+
+[default.extend-words]
+Ratatui = "Ratatui"
+BA = "BA"
+CAF = "CAF"
+LSO = "LSO"
+NAM = "NAM"
+SOM = "SOM"
+SUR = "SUR"
+THA = "THA"
+TTO = "TTO"
+ist = "ist"
+IST = "IST"
+udid = "udid"
+LISTEND = "LISTEND"
+MAPPIN = "MAPPIN"

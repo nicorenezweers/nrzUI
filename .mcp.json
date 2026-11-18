@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "nrzui": {
+      "args": [
+        "mcp"
+      ],
+      "command": "nrzui"
+    }
+  }
+}

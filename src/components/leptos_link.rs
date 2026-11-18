@@ -1,0 +1,24 @@
+use dioxus::prelude::*;
+
+use crate::utils::assets::LEPTOS_LOGO;
+
+const LEPTOS_URL: &str = "https://leptos.ui.zweers.ch";
+
+#[component]
+pub fn LeptosLink() -> Element {
+    rsx! {
+        a {
+            href: LEPTOS_URL,
+            target: "_blank",
+            rel: "noopener noreferrer",
+            "aria-label": "Leptos",
+            class: "inline-flex items-center text-sm transition-colors text-muted-foreground hover:text-foreground",
+            img {
+                src: LEPTOS_LOGO,
+                alt: "Leptos",
+                class: "size-5 rounded-full",
+                "aria-hidden": "true",
+            }
+        }
+    }
+}

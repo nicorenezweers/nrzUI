@@ -1,0 +1,406 @@
+use ::registry::hooks::use_theme_mode::ThemeMode;
+use ::registry::ui::toast::ToastToaster;
+use dioxus::prelude::*;
+
+// Generated registry data: giant match/vec builders that exceed the line cap by design.
+#[allow(clippy::too_many_lines)]
+pub mod __registry__;
+pub mod components;
+mod domain;
+pub mod markdown;
+pub mod registry;
+mod routes;
+pub mod utils;
+
+use domain::articles::pages::{ArticleCategoryPage, ArticlePage, ArticlesLayout, ArticlesPage};
+use domain::blocks::routing::blocks_layout::BlocksLayout;
+use domain::blocks::routing::blocks_pages::{
+    FaqBlocks, FootersBlocks, HeadersBlocks, IntegrationsBlocks, LoginBlocks, SidenavBlocks,
+};
+use domain::blocks::routing::sidenav_demo_layout::{SidenavDemoLayout, SidenavInsetRightLayout};
+use domain::blocks::routing::sidenav_demo_pages::{
+    SidenavDemoComponentPage, SidenavDemoComponents, SidenavDemoDocs, SidenavDemoHookPage, SidenavDemoHooks,
+};
+use domain::bug_report::page_bug_reports::PageBugReports;
+use domain::charts::routing::charts_layout::ChartsLayout;
+use domain::charts::routing::charts_pages::{
+    AreaChartPage, BarChartPage, LineChartPage, PieChartPage, RadarChartPage, RadialChartPage,
+};
+use domain::create::page_create::PageCreate;
+use domain::test::routing::test_layout::TestLayout;
+use domain::test::routing::test_pages::TestPage;
+use domain::views::view_router::ViewRouter;
+use domain::workflows::routing::workflow_view_page::WorkflowViewPage;
+use domain::workflows::routing::workflows_layout::WorkflowsLayout;
+use domain::workflows::routing::workflows_pages::WorkflowsPage;
+use routes::app_layout::AppLayout;
+use routes::component_page::ComponentPage;
+use routes::docs_index_page::{DocsComponentsIndexPage, DocsHooksIndexPage};
+use routes::docs_layout::DocsLayout;
+use routes::home_layout::HomeLayout;
+use routes::home_page::Home;
+use routes::hook_page::HookPage;
+use routes::page_download::PageDownload;
+use routes::page_icons::PageIcons;
+use routes::page_not_found::PageNotFound;
+
+const FAVICON: Asset = asset!("/public/favicon.ico");
+const FAVICON_16: Asset = asset!("/public/icons/favicon-16x16.png");
+const FAVICON_32: Asset = asset!("/public/icons/favicon-32x32.png");
+const APPLE_TOUCH_ICON: Asset = asset!("/public/icons/apple-touch-icon.png");
+const MANIFEST: Asset = asset!("/public/manifest.json");
+const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+const CHART_INIT_JS: Asset = asset!("/public/app_components/chart_init.js");
+const TOAST_RUNTIME_JS: Asset = asset!("/public/app_components/toast.js");
+const TOAST_RUNTIME_CSS: Asset = asset!("/public/app_components/toast.css");
+const SPLASH_INIT_JS: Asset = asset!("/public/app_components/splash_init.js");
+const LOGO_DARK_88: Asset = asset!("/public/icons/logo-dark-square-88.png");
+// Loaded globally (not just on chart routes): chart_init.js's own lazy-load
+// fallback uses a hardcoded "/cdn/apexcharts..." path that 404s on iOS, where
+// assets are served from a fingerprinted path. Home's ThemesBlocks cards render
+// charts too, so ApexCharts has to be asset!()-resolved and available everywhere.
+const APEXCHARTS_JS: Asset = asset!("/public/cdn/apexcharts.5.3.6.min.js");
+
+#[derive(Debug, Clone, Routable, PartialEq)]
+#[rustfmt::skip]
+enum Route {
+    #[layout(AppLayout)]
+        #[layout(HomeLayout)]
+            #[route("/")]
+            Home {},
+        #[end_layout]
+        #[layout(ArticlesLayout)]
+            #[route("/articles")]
+            ArticlesPage {},
+            #[route("/articles/category/:category")]
+            ArticleCategoryPage { category: String },
+            #[route("/articles/:slug")]
+            ArticlePage { slug: String },
+        #[end_layout]
+        #[layout(DocsLayout)]
+            #[redirect("/docs", || Route::DocsComponentsIndexPage {})]
+            #[redirect("/components", || Route::DocsComponentsIndexPage {})]
+            #[redirect("/components/:name", |name: String| {
+                // Old `/components/:name` URLs predate the hooks/components split.
+                // Some of them actually name a hook (e.g. use-copy-clipboard), so
+                // resolve against both registries instead of always landing on
+                // ComponentPage and soft-404ing.
+                if __registry__::static_md_registry::find_docs_component_entry(&name).is_none()
+                    && __registry__::static_md_registry::find_hook_entry(&name).is_some()
+                {
+                    Route::HookPage { name }
+                } else {
+                    Route::ComponentPage { name }
+                }
+            })]
+            #[redirect("/hooks", || Route::DocsHooksIndexPage {})]
+            #[redirect("/hooks/:name", |name: String| Route::HookPage { name })]
+            #[route("/docs/components")]
+            DocsComponentsIndexPage {},
+            #[route("/docs/components/:name")]
+            ComponentPage { name: String },
+            #[route("/docs/hooks")]
+            DocsHooksIndexPage {},
+            #[route("/docs/hooks/:name")]
+            HookPage { name: String },
+        #[end_layout]
+        #[layout(BlocksLayout)]
+            #[redirect("/blocks", || Route::LoginBlocks {})]
+            #[route("/blocks/login")]
+            LoginBlocks {},
+            #[route("/blocks/sidenav")]
+            SidenavBlocks {},
+            #[route("/blocks/headers")]
+            HeadersBlocks {},
+            #[route("/blocks/footers")]
+            FootersBlocks {},
+            #[route("/blocks/faq")]
+            FaqBlocks {},
+            #[route("/blocks/integrations")]
+            IntegrationsBlocks {},
+        #[end_layout]
+        #[layout(ChartsLayout)]
+            #[redirect("/charts", || Route::AreaChartPage {})]
+            #[route("/charts/area-chart")]
+            AreaChartPage {},
+            #[route("/charts/bar-chart")]
+            BarChartPage {},
+            #[route("/charts/line-chart")]
+            LineChartPage {},
+            #[route("/charts/pie-chart")]
+            PieChartPage {},
+            #[route("/charts/radar-chart")]
+            RadarChartPage {},
+            #[route("/charts/radial-chart")]
+            RadialChartPage {},
+        #[end_layout]
+        #[layout(WorkflowsLayout)]
+            #[route("/workflows")]
+            WorkflowsPage {},
+        #[end_layout]
+        #[layout(TestLayout)]
+            #[route("/test-page")]
+            TestPage {},
+        #[end_layout]
+        #[route("/icons")]
+        PageIcons {},
+        #[route("/download")]
+        PageDownload {},
+        #[route("/create")]
+        PageCreate {},
+        #[route("/bug-reports/d7f3a9c2e1b5")]
+        PageBugReports {},
+    #[end_layout]
+    #[layout(SidenavDemoLayout)]
+        #[layout(SidenavInsetRightLayout)]
+            #[route("/view/:sidenav/docs")]
+            SidenavDemoDocs { sidenav: String },
+            #[route("/view/:sidenav/docs/components")]
+            SidenavDemoComponents { sidenav: String },
+            #[route("/view/:sidenav/docs/components/:name")]
+            SidenavDemoComponentPage { sidenav: String, name: String },
+            #[route("/view/:sidenav/docs/hooks")]
+            SidenavDemoHooks { sidenav: String },
+            #[route("/view/:sidenav/docs/hooks/:name")]
+            SidenavDemoHookPage { sidenav: String, name: String },
+        #[end_layout]
+    #[end_layout]
+    #[route("/view/:id")]
+    WorkflowViewPage { id: String },
+    #[route("/view/block/:id")]
+    ViewRouter { id: String },
+    #[route("/:..segments")]
+    PageNotFound { segments: Vec<String> },
+}
+
+// Ported from leptos-ui's `__DisableContentInsetAdjustment.m` /
+// `__HideKeyboardAccessory.m` (native ObjC constructors, compiled and linked
+// by `build.rs` on iOS only). Both swizzle `WKWebView`/`WKContentView` at
+// load: the first forces `contentInsetAdjustmentBehavior = .never` so the
+// CSS `env(safe-area-inset-*)` padding (see `viewport-fit=cover` below) is
+// the only source of bottom-nav inset instead of stacking with WebKit's own
+// automatic inset (the double-inset bug); the second hides the grey
+// prev/next/Done keyboard accessory bar. `dx` has no xcodegen step and
+// silently drops `-force_load`, so referencing these symbols from Rust is
+// what keeps the linker from pruning their object files out of the compiled
+// staticlib before the constructors ever get a chance to run.
+#[cfg(target_os = "ios")]
+#[allow(unsafe_code)]
+unsafe extern "C" {
+    fn DisableContentInsetAdjustment();
+    fn HideKeyboardAccessoryBar();
+}
+
+fn main() {
+    #[cfg(target_os = "ios")]
+    #[allow(unsafe_code)]
+    unsafe {
+        DisableContentInsetAdjustment();
+        HideKeyboardAccessoryBar();
+    }
+
+    // Native client (iOS/desktop): unlike wasm, which always resolves server-fn
+    // calls as relative URLs against the page's own origin, the native client
+    // has no origin at all. Without an explicit root, `dioxus_fullstack::client`
+    // falls back to a dead placeholder host and every server fn (GithubStars,
+    // newsletter signup, bug reports, ...) fails silently forever.
+    //
+    // Debug builds (dx serve, iOS Simulator) point at the local dev server
+    // instead of prod: the Simulator shares the host Mac's network stack, so
+    // `localhost:8080` (Dioxus.toml [serve] port) reaches `dx serve` directly.
+    // A hardcoded prod URL here would make local dev silently hit prod.
+    #[cfg(all(not(feature = "server"), not(target_arch = "wasm32"), debug_assertions))]
+    dioxus::fullstack::set_server_url(app_config::SiteConfig::BASE_URL_LOCALHOST);
+    #[cfg(all(not(feature = "server"), not(target_arch = "wasm32"), not(debug_assertions)))]
+    dioxus::fullstack::set_server_url(app_config::SiteConfig::BASE_URL);
+
+    // Web/wasm build (and any non-server build): the stock launch path. The
+    // client-side `Router::<Route>` handles every URL once the page is loaded,
+    // so the bug documented on `mod server` below never manifests here.
+    #[cfg(not(feature = "server"))]
+    dioxus::launch(App);
+
+    // Server build: use our own axum router instead of the one
+    // `dioxus::launch` would build. `dioxus::serve` is the documented 0.7
+    // extension point for this ("Serve a fullstack dioxus application with a
+    // custom axum router"). The closure is called once per (re)build so
+    // hot-patching still swaps the router in dev.
+    #[cfg(feature = "server")]
+    dioxus::serve(|| async { Ok(server::router()) });
+}
+
+/// Server bootstrap. Hand-rolled replacement for `dioxus::launch`'s server
+/// router.
+///
+/// ## The bug this works around
+///
+/// Symptom: in-app SPA navigation to `/docs/components/alert` (or any
+/// `/docs/*` / `/icons` page) works, but a **hard refresh / direct hit** of the
+/// same URL returns HTTP 404. `/components/alert`, `/create`, `/charts/*` etc.
+/// are fine. Dev (`dx serve`) and any served-SSR deployment are affected;
+/// a fully pre-rendered static export is not (each route is a real file on
+/// disk there).
+///
+/// Root cause: `dioxus-server` 0.7.10 `DioxusRouterExt::serve_static_assets`
+/// -> `serve_dir_cached` (see
+/// `~/.cargo/registry/.../dioxus-server-0.7.10/src/server.rs`). For every
+/// top-level entry in `public/` it does, in debug builds:
+///
+/// ```ignore
+/// router = router.nest_service(&route, ServeDir::new(&path));
+/// ```
+///
+/// `nest_service("/docs", ...)` makes axum hand the **entire `/docs/*`
+/// subtree** to that `ServeDir`, and `ServeDir` has no not-found service, so a
+/// path with no matching file (`public/docs/components/alert` does not exist,
+/// only `alert.md` does) terminates with 404. The request never reaches
+/// `.fallback(render_handler)`, i.e. the SSR renderer. Our routes
+/// `/docs/components/*`, `/docs/hooks/*` and `/icons` collide with the
+/// real directories `public/docs/` and `public/icons/` and are therefore
+/// unreachable on a cold request.
+///
+/// Why the client router still works: it never issues these HTTP requests, it
+/// resolves `Route` in-memory.
+///
+/// Why not just move the directories: `public/docs/*.md` is intentionally
+/// served as raw markdown (LLM/tooling consumers, parity with `leptos-ui`),
+/// and `public/icons/*` holds real favicons/logos referenced by URL. Renaming
+/// them only relocates the same collision and diverges from `leptos-ui`.
+///
+/// ## The fix
+///
+/// Build the router so `ServeDir` is the **fallback**, not a set of nested
+/// services: a real file under `public/` still wins, everything else falls
+/// through to the Dioxus SSR handler. This is the exact shape `leptos_axum`
+/// uses (`ServeDir::new(dir).fallback(handler)`), which is why the Leptos site
+/// with the identical `public/` layout does not have this bug.
+///
+/// Trade-off: we duplicate the small amount of glue
+/// `serve_dioxus_application` normally does (server-fn registration + SSR
+/// fallback + state) and skip `apply_base_path` (this deployment configures no
+/// base path). Revisit / delete this module if `dioxus-server` gains a
+/// not-found fallback on its static handler upstream.
+///
+/// See `BUGFIX_docs_routes_404_on_refresh.md` for the full write-up.
+#[cfg(feature = "server")]
+mod server {
+    use dioxus::server::axum::Router;
+    use dioxus::server::axum::routing::get;
+    use dioxus::server::{DioxusRouterExt, FullstackState, ServeConfig};
+    use tower_http::services::ServeDir;
+
+    use super::App;
+
+    /// Directory the CLI bundles static assets into.
+    ///
+    /// Mirrors the private `dioxus_server::public_path()`: honour
+    /// `DIOXUS_PUBLIC_PATH` if set, otherwise `<exe dir>/public` (what `dx serve`
+    /// and the prod binary use).
+    fn public_path() -> std::path::PathBuf {
+        if let Ok(path) = std::env::var("DIOXUS_PUBLIC_PATH") {
+            return path.into();
+        }
+        std::env::current_exe()
+            .ok()
+            .and_then(|path| path.parent().map(std::path::Path::to_path_buf))
+            .unwrap_or_else(|| std::path::PathBuf::from("."))
+            .join("public")
+    }
+
+    /// Equivalent of `Router::new().serve_dioxus_application(cfg, App)` but with
+    /// static-file serving as a fallback instead of per-directory
+    /// `nest_service`s. Order matters:
+    ///   1. `register_server_functions()`: POST `/api/*` handlers.
+    ///   2. `fallback_service(ServeDir.fallback(ssr))`: try a real file under
+    ///      `public/`, and on miss render the route server-side. This is the
+    ///      line that fixes the `/docs/*` and `/icons` 404-on-refresh.
+    ///   3. `with_state(state)`: supply `FullstackState` to the server fns.
+    pub fn router() -> Router {
+        let cfg = ServeConfig::new();
+        let state = FullstackState::new(cfg, App);
+
+        // SSR renderer as a leaf service, with its own state applied so it can
+        // stand alone as `ServeDir`'s not-found target.
+        let ssr = get(dioxus::server::render_handler).with_state(state.clone());
+
+        // `append_index_html_on_directories(false)`: without it, a request whose
+        // path maps to a real directory under `public/` (`/docs`, `/docs/components`,
+        // `/docs/hooks`, `/icons` all have a matching dir) gets a 307 to the
+        // trailing-slash form before falling through. Disabling it makes `ServeDir`
+        // return "not found" for a bare directory hit, so those paths fall straight
+        // to the SSR handler and render at their canonical (no trailing slash) URL.
+        let static_files = ServeDir::new(public_path()).append_index_html_on_directories(false).fallback(ssr);
+
+        Router::new().register_server_functions().fallback_service(static_files).with_state(state)
+    }
+}
+
+#[component]
+fn App() -> Element {
+    #[cfg(target_arch = "wasm32")]
+    ::registry::hooks::use_scroll_lock::init();
+
+    #[cfg(target_arch = "wasm32")]
+    utils::client_diagnostic_handler::init();
+
+    let theme_mode = ThemeMode::init();
+
+    // TODO: replace with <Html class=...> once Dioxus supports reactive html-element attributes (like leptos_meta `<Html {..} class=...>`)
+    use_effect(move || {
+        let is_dark = theme_mode.is_dark();
+        spawn(async move {
+            let js = if is_dark {
+                "document.documentElement.classList.add('dark');"
+            } else {
+                "document.documentElement.classList.remove('dark');"
+            };
+            dioxus::document::eval(js).await.ok();
+        });
+    });
+
+    rsx! {
+        // viewport-fit=cover: makes env(safe-area-inset-*) resolve to real values
+        // instead of 0px. Without it the bottom nav's safe-area padding is inert
+        // and correct positioning depends entirely on WKWebView's native
+        // auto-inset behavior, which is not reliably consistent across app
+        // relaunches. Harmless on web/desktop (no safe-area insets there).
+        document::Meta {
+            name: "viewport",
+            content: "width=device-width, initial-scale=1, viewport-fit=cover",
+        }
+        document::Title { "nrzUI" }
+        // TODO: Dioxus injects a <div id="main"> between <body> and the App component.
+        // Leptos doesn't have this wrapper, so the h-full chain works natively:
+        //   html(100dvh) → body(h-full) → AppWrapper div(h-full) → main(flex-1 overflow-y-auto)
+        // In Dioxus the chain is broken because #main has no height, so flex-1 on <main> collapses.
+        // Ideal fix: find a way to pass h-full to the Dioxus mount div without a style tag.
+        // For now we inject it inline so it wins over any stylesheet ordering issues.
+        document::Style { "#main {{ height: 100%; }}" }
+        // Dark-mode-flash prevention + branded loading screen (home page only), matching
+        // leptos-ui's shell.rs pattern. The JS itself must live in an external file: Dioxus's
+        // document::Script only SSRs the `src` attribute, not literal `children` (confirmed
+        // empirically — inline script bodies never make it into the server-rendered HTML in
+        // this Dioxus version), so an inline <script>-with-JS-text approach silently no-ops.
+        document::Style {
+            "html.loading-screen,html.loading-screen body{{background:#18181b !important}} #app-loading-screen{{position:fixed;top:-100px;right:0;bottom:-100px;left:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;background:#18181b;clip-path:ellipse(150% 150% at 50% 0%);transition:clip-path 1s cubic-bezier(.4,0,.2,1)}} #app-loading-screen svg{{width:1.5rem;height:1.5rem;color:#a1a1aa}} #app-loading-screen svg line{{animation:ios-spin 1s linear infinite}} #app-loading-screen svg line:nth-child(1){{animation-delay:0s}} #app-loading-screen svg line:nth-child(2){{animation-delay:-0.875s}} #app-loading-screen svg line:nth-child(3){{animation-delay:-0.75s}} #app-loading-screen svg line:nth-child(4){{animation-delay:-0.625s}} #app-loading-screen svg line:nth-child(5){{animation-delay:-0.5s}} #app-loading-screen svg line:nth-child(6){{animation-delay:-0.375s}} #app-loading-screen svg line:nth-child(7){{animation-delay:-0.25s}} #app-loading-screen svg line:nth-child(8){{animation-delay:-0.125s}} @keyframes ios-spin{{0%,39%,100%{{opacity:0.2}}40%{{opacity:1}}}} #app-loading-screen.fade-out{{clip-path:ellipse(150% 0% at 50% 0%)}}"
+        }
+        document::Script { src: SPLASH_INIT_JS, "data-logo": LOGO_DARK_88 }
+        // Page intro fade, replayed on every route change via `retrigger_page_fade`.
+        // `backwards` keeps the from-state applied during the pre-animation delay.
+        document::Style {
+            "@keyframes page__fade_in{{from{{opacity:0;transform:translateY(6px)}}to{{opacity:1}}}} .page__fade{{animation:page__fade_in 200ms ease-out backwards}}"
+        }
+        document::Link { rel: "icon", r#type: "image/png", sizes: "32x32", href: FAVICON_32 }
+        document::Link { rel: "icon", r#type: "image/png", sizes: "16x16", href: FAVICON_16 }
+        document::Link { rel: "icon", href: FAVICON }
+        document::Link { rel: "apple-touch-icon", href: APPLE_TOUCH_ICON }
+        document::Link { rel: "manifest", href: MANIFEST }
+        document::Stylesheet { href: TAILWIND_CSS }
+        document::Stylesheet { href: TOAST_RUNTIME_CSS }
+        document::Script { src: APEXCHARTS_JS }
+        document::Script { src: CHART_INIT_JS }
+        ToastToaster {}
+        script { src: TOAST_RUNTIME_JS }
+        Router::<Route> {}
+    }
+}

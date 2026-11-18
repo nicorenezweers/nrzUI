@@ -1,0 +1,19 @@
+[package]
+name = "leptos_ui"
+version = "1.0.0"
+edition = "2024"
+authors = ["nrz"]
+homepage = "https://leptos.ui.zweers.ch"
+documentation = "https://leptos.ui.zweers.ch/docs/components/installation"
+description = "Macros to build UI components easily with Leptos and Tailwind CSS."
+keywords = ["leptos", "ui", "tailwind", "css", "clx"]
+categories = ["gui", "web-programming", "development-tools", "accessibility", "wasm"]
+license = "MIT"
+readme = "./README.md"
+repository = "https://git.zweers.ch/nicorenezweers/nrzUI/src/branch/main/crates/leptos_ui"
+
+
+[dependencies]
+leptos = { version = "0.8", features = ["nightly"] }
+tw_merge = { version = "0.1", features = ["variant"] }
+paste = "1"

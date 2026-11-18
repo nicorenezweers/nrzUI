@@ -1,0 +1,24 @@
+[package]
+name = "app_domain"
+version = "1.0.0"
+edition = "2024"
+license = "MIT"
+description = "Application domain types and theme components for nrzUI."
+repository = "https://git.zweers.ch/nicorenezweers/nrzUI"
+readme = "../../README.md"
+keywords = ["dioxus", "ui", "themes"]
+categories = ["gui", "web-programming"]
+
+[lints]
+workspace = true
+
+[dependencies]
+dioxus = { version = "0.7", features = ["router", "fullstack"] }
+registry.workspace = true
+icons.workspace = true
+strum.workspace = true
+
+[features]
+default = []
+web = ["dioxus/web"]
+server = ["dioxus/server"]

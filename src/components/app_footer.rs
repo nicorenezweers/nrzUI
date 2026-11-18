@@ -1,0 +1,124 @@
+use dioxus::prelude::*;
+use registry::blocks::footer_logos::SvgGridPattern;
+use registry::ui::button::Button;
+use registry::ui::card::{Card, CardContent, CardDescription, CardTitle};
+use registry::ui::footer::{
+    Footer, FooterBrand, FooterBrandLink, FooterContainer, FooterCopyright, FooterDescription, FooterExternalLink,
+    FooterGrid, FooterLink, FooterLinks, FooterLinksSection, FooterSection, FooterSectionsGrid, FooterTitle,
+};
+
+use crate::utils::assets::LOGO_SQUARE_DARK;
+
+const ROUTE_ACCORDION: &str = "/docs/components/accordion";
+const ROUTE_BUTTON: &str = "/docs/components/button";
+const ROUTE_CARD: &str = "/docs/components/card";
+const ROUTE_INSTALLATION: &str = "/docs/components/installation";
+
+const ROUTE_USE_COPY_CLIPBOARD: &str = "/docs/hooks/use-copy-clipboard";
+const ROUTE_USE_LOCK_BODY_SCROLL: &str = "/docs/hooks/use-lock-body-scroll";
+const ROUTE_USE_HORIZONTAL_SCROLL: &str = "/docs/hooks/use-horizontal-scroll";
+
+const ROUTE_ARTICLES: &str = "/articles";
+const ROUTE_HOME: &str = "/";
+const URL_NRZ: &str = "https://zweers.ch";
+const URL_REPO: &str = "https://git.zweers.ch/nicorenezweers/nrzUI";
+const URL_UPSTREAM: &str = "https://github.com/rust-ui/ui";
+
+#[component]
+pub fn AppFooter() -> Element {
+    rsx! {
+        CardSection {}
+
+        Footer { class: "pt-12 sm:pt-20 bg-accent",
+            FooterContainer { class: "space-y-16",
+                FooterGrid {
+                    FooterBrand { class: "space-y-4 md:space-y-5",
+                        FooterBrandLink { href: ROUTE_HOME,
+                            div { class: "flex gap-3 justify-center items-center",
+                                img {
+                                    src: LOGO_SQUARE_DARK,
+                                    alt: "Logo nrzUI",
+                                    class: "size-6",
+                                }
+                                span { "nrzUI" }
+                            }
+                        }
+                        FooterDescription {
+                            "nrzUI is a registry of reusable components that you can copy/paste into your own app. Customize them as you want."
+                        }
+                        p { class: "mt-2 text-sm text-muted-foreground",
+                            "Last updated: "
+                            {env!("BUILD_DATE")}
+                        }
+                    }
+                    FooterSectionsGrid { class: "col-span-3 sm:grid-cols-4",
+                        FooterLinksSection {
+                            FooterTitle { "Components" }
+                            FooterLinks {
+                                FooterLink { href: ROUTE_ACCORDION, "Accordion" }
+                                FooterLink { href: ROUTE_BUTTON, "Button" }
+                                FooterLink { href: ROUTE_CARD, "Card" }
+                            }
+                        }
+                        FooterLinksSection {
+                            FooterTitle { "Learn" }
+                            FooterLinks {
+                                FooterLink { href: ROUTE_ARTICLES, "Articles" }
+                            }
+                        }
+                        FooterLinksSection {
+                            FooterTitle { "Hooks" }
+                            FooterLinks {
+                                FooterLink { href: ROUTE_USE_COPY_CLIPBOARD, "Use Copy Clipboard" }
+                                FooterLink { href: ROUTE_USE_LOCK_BODY_SCROLL, "Use Lock Body Scroll" }
+                                FooterLink { href: ROUTE_USE_HORIZONTAL_SCROLL, "Use Horizontal Scroll" }
+                            }
+                        }
+                        FooterLinksSection {
+                            FooterTitle { "Source" }
+                            FooterLinks {
+                                FooterExternalLink { href: URL_REPO, "nrzGit" }
+                                FooterExternalLink { href: URL_UPSTREAM, "Based on rust-ui (MIT)" }
+                            }
+                        }
+                    }
+                }
+
+                FooterSection { class: "border-t",
+                    FooterCopyright {
+                        "Built by "
+                        a {
+                            class: "font-semibold",
+                            href: URL_NRZ,
+                            target: "_blank",
+                            rel: "noopener",
+                            "nrz"
+                        }
+                        "."
+                    }
+                    FooterCopyright { "nrzUI · MIT License" }
+                }
+            }
+        }
+    }
+}
+
+#[component]
+pub fn CardSection() -> Element {
+    rsx! {
+        section { class: "relative pt-12 md:pt-24 bg-linear-to-b from-background to-accent from-50% to-50%",
+            div { class: "px-6 mx-auto max-w-5xl",
+                Card { class: "overflow-hidden relative p-12 md:py-20 md:px-32",
+                    CardContent { class: "relative text-center",
+                        CardTitle { class: "text-3xl md:text-4xl text-balance", "Build your App" }
+                        CardDescription { class: "mt-4 mb-6 text-balance",
+                            "A registry of reusable Dioxus components built with Tailwind CSS. Copy, paste, and customize for your Rust applications."
+                        }
+                        Button { href: ROUTE_INSTALLATION, "Start now" }
+                    }
+                    SvgGridPattern {}
+                }
+            }
+        }
+    }
+}

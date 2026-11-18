@@ -1,0 +1,153 @@
+use app_config::{SeoMeta, SiteConfig};
+use dioxus::prelude::*;
+use icons::Download;
+use registry::ui::badge::{Badge, BadgeVariant};
+use registry::ui::card::{Card, CardContent, CardDescription, CardHeader, CardTitle};
+use strum::{EnumIter, IntoEnumIterator};
+
+use crate::components::app_footer::AppFooter;
+use crate::components::navigation::app_header::AppHeader;
+
+const BASE_DOWNLOAD_URL: &str = "https://git.zweers.ch/nicorenezweers/releases-dioxus/releases/latest/download";
+// TODO: these filenames must stay in sync with the rename step in
+// .github/workflows/desktop-release-dx.yml (nrzui/releases-dioxus repo).
+// If that step changes or breaks, these links go stale silently again.
+
+struct DownloadFile {
+    label: &'static str,
+    filename: &'static str,
+    size: &'static str,
+}
+
+impl DownloadFile {
+    fn url(&self) -> String {
+        format!("{}/{}", BASE_DOWNLOAD_URL, self.filename)
+    }
+}
+
+#[derive(Clone, Copy, Debug, EnumIter, PartialEq)]
+enum Platform {
+    MacOs,
+    Linux,
+    Windows,
+}
+
+impl Platform {
+    const fn title(self) -> &'static str {
+        match self {
+            Self::MacOs => "macOS",
+            Self::Linux => "Linux",
+            Self::Windows => "Windows",
+        }
+    }
+
+    const fn subtitle(self) -> &'static str {
+        match self {
+            Self::MacOs => "Apple Silicon (M1/M2/M3/M4)",
+            Self::Linux => "x86_64",
+            Self::Windows => "x64",
+        }
+    }
+
+    const fn downloads(self) -> &'static [DownloadFile] {
+        match self {
+            Self::MacOs => &[DownloadFile { label: ".dmg", filename: "nrzui.dmg", size: "1.6 MB" }],
+            Self::Linux => &[
+                DownloadFile { label: ".AppImage", filename: "nrzui_amd64.AppImage", size: "~5 MB" },
+                DownloadFile { label: ".deb", filename: "nrzui_amd64.deb", size: "~3 MB" },
+            ],
+            Self::Windows => &[
+                DownloadFile { label: ".msi", filename: "nrzui_x64_en-US.msi", size: "~4 MB" },
+                DownloadFile { label: ".exe", filename: "nrzui_x64-setup.exe", size: "~4 MB" },
+            ],
+        }
+    }
+
+    const fn requirements(self) -> &'static [&'static str] {
+        match self {
+            Self::MacOs => &["macOS 11.0 (Big Sur) or later", "Apple Silicon (M1, M2, M3, M4)", "~4 MB disk space"],
+            Self::Linux => {
+                &["Ubuntu 22.04 / Debian 11 or later", "x86_64 architecture", "WebKit2GTK 4.1", "~5 MB disk space"]
+            }
+            Self::Windows => &["Windows 10 or later", "x64 architecture", "~4 MB disk space"],
+        }
+    }
+}
+
+// Classes mirroring the registry `Button` (Default variant, Lg size), applied to a
+// plain `<a>` so the anchor keeps the native `download` attribute and does a real
+// cross-origin navigation to the GitHub release asset (the `Button` component
+// routes internal `Link`s only).
+const DOWNLOAD_BTN_CLASS: &str = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] hover:cursor-pointer bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 rounded-md px-6 [&_svg]:pointer-events-none [&_svg]:shrink-0";
+
+#[component]
+pub fn PageDownload() -> Element {
+    let title = format!("Download nrzUI Desktop | {}", SiteConfig::TITLE);
+    let description = "Download nrzUI Desktop app for macOS, Linux, and Windows. Browse and preview UI components offline with our native desktop application.".to_string();
+    let canonical_url = format!("{}/download", SiteConfig::BASE_URL);
+
+    rsx! {
+        SeoMeta { title, description, canonical_url }
+
+        AppHeader {}
+
+        div { class: "flex flex-col gap-12 items-center py-16 px-4 mx-auto max-w-4xl",
+            div { class: "flex flex-col gap-4 items-center text-center",
+                Badge { variant: BadgeVariant::Secondary, "Desktop App" }
+                h1 { class: "text-4xl font-bold tracking-tight sm:text-5xl", "nrzUI Desktop" }
+                p { class: "max-w-2xl text-lg text-muted-foreground",
+                    "Browse and preview UI components offline with our native desktop application. Built with Tauri for a fast, lightweight experience."
+                }
+            }
+
+            div { class: "grid gap-6 w-full max-w-2xl",
+                for platform in Platform::iter() {
+                    Card { class: "transition-all hover:shadow-lg",
+                        CardHeader {
+                            div { class: "flex gap-4 justify-between items-center",
+                                div { class: "flex flex-col gap-1",
+                                    CardTitle { {platform.title()} }
+                                    CardDescription { {platform.subtitle()} }
+                                }
+                                div { class: "flex gap-2",
+                                    for file in platform.downloads() {
+                                        a {
+                                            key: "{file.filename}",
+                                            class: DOWNLOAD_BTN_CLASS,
+                                            href: file.url(),
+                                            download: file.filename,
+                                            Download { class: "size-5" }
+                                            span { {file.label} }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        CardContent {
+                            div { class: "flex flex-wrap gap-3 text-sm text-muted-foreground",
+                                for file in platform.downloads() {
+                                    span { key: "{file.filename}", {format!("{} · {}", file.filename, file.size)} }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            div { class: "grid gap-8 w-full max-w-2xl sm:grid-cols-3",
+                for platform in Platform::iter() {
+                    div { key: "{platform.title()}", class: "flex flex-col gap-2",
+                        h2 { class: "text-sm font-semibold", {platform.title()} }
+                        ul { class: "space-y-1 text-sm text-muted-foreground",
+                            for req in platform.requirements() {
+                                li { key: "{req}", {*req} }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        AppFooter {}
+    }
+}

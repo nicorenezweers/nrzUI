@@ -1,0 +1,23 @@
+[package]
+name = "app_config"
+version = "1.0.0"
+edition = "2024"
+license = "MIT"
+description = "Application configuration and SEO components for nrzUI."
+repository = "https://git.zweers.ch/nicorenezweers/nrzUI"
+readme = "../../README.md"
+keywords = ["dioxus", "ui", "seo"]
+categories = ["gui", "web-programming"]
+
+[lints]
+workspace = true
+
+[features]
+default = []
+web = ["dioxus/web"]
+server = ["dioxus/server"]
+
+[dependencies]
+dioxus = { version = "0.7", features = ["fullstack"] }
+serde.workspace = true
+serde_json.workspace = true

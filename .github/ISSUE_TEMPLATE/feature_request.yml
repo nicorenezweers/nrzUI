@@ -1,0 +1,59 @@
+name: Feature request
+description: Suggest an improvement for nrzUI.
+title: "[feat]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search open and closed issues first. If you are unsure whether this is a feature request or a support question, ask in [Discussions](https://git.zweers.ch/nicorenezweers/nrzUI/issues).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What problem or use case does this address? Who benefits?
+      placeholder: I need to ... because ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior, API, component, or documentation change you want.
+    validations:
+      required: true
+
+  - type: input
+    id: affected-surface
+    attributes:
+      label: Affected component, page, or command
+      description: Name the existing nrzUI surface when applicable.
+      placeholder: Button, docs, registry CLI, or N/A
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and workarounds
+      description: What alternatives did you consider or try?
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or references
+      description: Add screenshots, examples, prior art, links, or other context when available.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      description: By submitting, you agree to follow the project contribution guidelines.
+      options:
+        - label: I searched the documentation and existing issues/PRs.
+          required: true
+        - label: I have read the [contribution guidelines](https://git.zweers.ch/nicorenezweers/nrzUI/src/branch/main/CONTRIBUTING.md).
+          required: true

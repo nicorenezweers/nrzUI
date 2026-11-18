@@ -1,0 +1,17 @@
+[package]
+name = "app_routes"
+version = "1.0.0"
+edition = "2024"
+license = "MIT"
+description = "Application routes for nrzUI."
+repository = "https://git.zweers.ch/nicorenezweers/nrzUI"
+readme = "../../README.md"
+keywords = ["dioxus", "ui", "routing"]
+categories = ["gui", "web-programming"]
+
+[lints]
+workspace = true
+
+[dependencies]
+strum.workspace = true
+heck.workspace = true

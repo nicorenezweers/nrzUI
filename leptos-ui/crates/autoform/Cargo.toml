@@ -1,0 +1,21 @@
+[package]
+name = "autoform"
+version = "1.0.0"
+edition = "2024"
+authors = ["nrz"]
+description = "Derive macro for automatic form generation"
+keywords = ["form", "derive", "leptos"]
+categories = ["gui", "web-programming"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://leptos.ui.zweers.ch"
+repository = "https://git.zweers.ch/nicorenezweers/nrzUI/src/branch/main/crates/autoform"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "2", features = ["full", "extra-traits"] }
+quote = "1"
+proc-macro2 = "1"
+darling = "0.20"

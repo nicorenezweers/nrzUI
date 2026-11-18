@@ -1,0 +1,6 @@
+# Use current stable Rust. No exact version pin.
+[toolchain]
+channel = "stable"
+targets = ["wasm32-unknown-unknown"]
+components = ["clippy", "rustfmt", "rust-src"]
+profile = "default"

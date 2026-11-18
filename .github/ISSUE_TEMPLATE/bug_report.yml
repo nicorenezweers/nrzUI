@@ -1,0 +1,124 @@
+name: Bug report
+description: Report a reproducible problem in nrzUI.
+title: "[bug]: "
+labels:
+  - bug
+  - needs reproduction
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve nrzUI.
+
+        Search open and closed issues first. If you are unsure whether something is a bug, ask in [Discussions](https://git.zweers.ch/nicorenezweers/nrzUI/issues).
+
+        Reports without enough evidence or reproduction detail may be closed until the missing information is added.
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: What is broken? Include the affected page, demo, component, or command.
+      placeholder: The icon color stays changed after selecting the default color.
+    validations:
+      required: true
+
+  - type: input
+    id: affected-surface
+    attributes:
+      label: Affected component, page, or command
+      description: Name the smallest affected nrzUI surface.
+      placeholder: Icon color demo, Button, `dx serve`, registry CLI
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Give the smallest exact sequence that triggers the problem.
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. Click ...
+        4. See ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual behavior
+      description: What happens instead? Include exact error text when available.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Attach a screenshot, GIF, video, logs, or a link proving the problem. For visual bugs, include a screenshot or recording.
+      placeholder: Drag files here, paste a link, or include relevant logs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: minimal-reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Link a repository and commit, or paste the smallest code sample that reproduces the problem. If impossible, explain why.
+      placeholder: https://github.com/... or paste the smallest relevant code here.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: nrzUI version or commit
+      placeholder: v0.1.0 or abc1234
+    validations:
+      required: true
+
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System info
+      description: Include OS, target/platform, browser or runtime, Rust version, and relevant feature flags.
+      render: shell
+      placeholder: |
+        OS: macOS 15.6
+        Target/platform: web
+        Browser/runtime: Firefox 140
+        Rust: 1.90.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Include browser console, terminal, or server logs around the failure. Do not include secrets.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      description: By submitting, you agree to follow the project contribution guidelines.
+      options:
+        - label: I searched the documentation and existing issues/PRs.
+          required: true
+        - label: I tested this against the latest available nrzUI version or commit.
+          required: true
+        - label: I understand that reports without actionable evidence may be closed until updated.
+          required: true
+        - label: I have read the [contribution guidelines](https://git.zweers.ch/nicorenezweers/nrzUI/src/branch/main/CONTRIBUTING.md).
+          required: true

@@ -1,0 +1,28 @@
+[application]
+name = "nrzUI"
+ios_info_plist = "ios/Info.plist"
+ios_entitlements = "ios/Entitlements.plist"
+
+[web]
+
+[serve]
+port = 8080
+fullstack = true
+
+# iOS / App Store bundling. Consumed by `dx bundle --platform ios`.
+# Ship script: nrz_ui_internals/deploy_ios_testflight_dioxus.sh
+# Shares the `ch.zweers.nrzui` bundle id with the (now superseded) Leptos/Tauri
+# app: same App Store Connect record, same "nrzUI Distribution" profile.
+[bundle]
+identifier = "ch.zweers.nrzui"
+version = "0.1.0"
+publisher = "nrzUI"
+# App Store icon source (1024x1024, no alpha, sRGB). dx generates the
+# smaller sizes from it at bundle time. Lifted from the Leptos app's
+# src-tauri/icons/1024x1024.png, flattened to RGB.
+icon = ["ios/AppIcon-1024.png"]
+
+[ios]
+identifier = "ch.zweers.nrzui"
+deployment_target = "16.0"
+info_plist = "ios/Info.plist"

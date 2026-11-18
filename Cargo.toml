@@ -1,0 +1,176 @@
+# 2026-10-26: dev profile faster clean builds (deps O1, syntect O3, build-override default codegen-units)
+[workspace]
+resolver = "2"
+members = ["app_crates/*"]
+exclude = ["crates/_starters/start-dioxus-fullstack", "crates/nrzui-cli", "crates/icons"]
+
+[package]
+name = "nrzui-dioxus"
+version = "1.0.0"
+authors = ["nicorenezweers"]
+edition = "2024"
+publish = false
+
+[lints]
+workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Pin =0.7.9: dioxus 0.7.10 requires dioxus-desktop 0.7.10, unavailable on crates.io (desktop skipped straight to 0.8.0-alpha).
+dioxus = { version = "=0.7.9", features = ["router", "fullstack"] }
+dioxus-html = { version = "=0.7.9" }
+registry.workspace = true
+app_config.workspace = true
+app_routes.workspace = true
+app_domain.workspace = true
+icons.workspace = true
+tw_merge.workspace = true
+pulldown-cmark = { version = "0.13", default-features = false, features = ["html"] }
+html_parser = "0.7"
+toml = "0.8"
+serde.workspace = true
+serde_json.workspace = true
+js-sys.workspace = true
+syntect = { version = "5.2", default-features = false, features = ["default-fancy", "regex-fancy"] }
+html-escape = { version = "0.2" }
+reqwest = { workspace = true, optional = true }
+resend-rs = { workspace = true, optional = true }
+validator = { workspace = true, optional = true }
+tracing = { workspace = true, optional = true }
+tower-http = { workspace = true, optional = true }
+tokio = { workspace = true, optional = true }
+rusqlite = { workspace = true, optional = true }
+strum.workspace = true
+wasm-bindgen.workspace = true
+wasm-bindgen-futures.workspace = true
+web-sys.workspace = true
+
+[build-dependencies]
+time = { version = "0.3", features = ["local-offset"] }
+cc = "1"
+
+[workspace.dependencies]
+registry = { path = "app_crates/registry" }
+app_config = { path = "app_crates/app_config" }
+app_domain = { path = "app_crates/app_domain" }
+app_routes = { path = "app_crates/app_routes" }
+
+icons = { path = "crates/icons", version = "0.19", features = ["dioxus", "dioxus_animated"] }
+tw_merge = { path = "crates/tw_merge/tw_merge", version = "0.1", features = ["debug"] }
+heck = "0.5"
+strum = { version = "0.28", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+time = { version = "0.3", features = ["serde", "wasm-bindgen"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+resend-rs = { version = "0.35", default-features = false, features = ["rustls-tls"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+validator = { version = "0.21", features = ["derive"] }
+tracing = "0.1"
+tower-http = { version = "0.7", features = ["fs"] }
+tokio = { version = "1", features = ["rt-multi-thread"] }
+js-sys = "0.3"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+web-sys = { version = "0.3", default-features = false, features = [
+  "Attr", "Blob", "BlobPropertyBag", "Clipboard", "console", "CssStyleDeclaration",
+  "Document", "DomRect", "DomTokenList", "DragEvent", "Element", "Event",
+  "EventTarget", "Headers", "History", "HtmlAnchorElement", "HtmlDocument", "HtmlElement",
+  "HtmlInputElement", "InputEvent", "KeyboardEvent", "Location", "MediaQueryList",
+  "MouseEvent", "MutationObserver", "MutationObserverInit", "MutationRecord",
+  "Navigator", "NamedNodeMap", "Node", "NodeList", "PointerEvent", "Request", "RequestInit",
+  "RequestMode", "Response", "ScrollBehavior", "ScrollIntoViewOptions",
+  "ScrollLogicalPosition", "ScrollToOptions", "Storage", "Url", "Window",
+] }
+
+[profile.dev]
+debug = false
+panic = "abort"
+incremental = true
+codegen-units = 256
+overflow-checks = false
+split-debuginfo = "unpacked"
+
+[profile.dev.build-override]
+opt-level = 3                 # build scripts + proc macros run on every build, keep them fast
+
+[profile.dev.package."*"]
+opt-level = 1                 # deps: O1 compiles far faster than O3 and is still much quicker than O0 at runtime
+debug = false
+
+[profile.dev.package.syntect]
+opt-level = 3                 # regex-fancy highlighting is CPU heavy, unusable at low opt-level
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 'z'
+
+[workspace.lints.clippy]
+# Groups first, negative priority: explicit policy below always wins.
+# TODO: Re-enable these groups after the deployment path is stable, then clean lint debt incrementally.
+all = { level = "warn", priority = -2 }
+pedantic = { level = "warn", priority = -2 }
+nursery = { level = "warn", priority = -2 }
+cargo = { level = "warn", priority = -2 }
+
+# Temporary deployment mode: lint policy relaxed; restore strict checks after deploy.
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+unreachable = "deny"
+indexing_slicing = "deny"
+get_unwrap = "deny"
+await_holding_lock = "deny"
+await_holding_invalid_type = "deny"
+dbg_macro = "deny"
+undocumented_unsafe_blocks = "deny"
+missing_safety_doc = "deny"
+enum_glob_use = "deny"
+infinite_loop = "deny"
+large_stack_arrays = "deny"
+lossy_float_literal = "deny"
+float_cmp = "deny"
+mem_forget = "deny"
+exit = "deny"
+disallowed_macros = "deny"
+disallowed_methods = "deny"
+disallowed_types = "deny"
+mutex_atomic = "deny"
+unwrap_in_result = "deny"
+panic_in_result_fn = "deny"
+as_underscore = "deny"
+
+# Quality ratchet.
+print_stdout = "warn" # build.rs needs Cargo directive output
+
+# Verified strict-Clippy exceptions.
+volatile_composites = "allow" # False positive from Dioxus `asset!` macro expansion; source value is not volatile.
+multiple_crate_versions = "allow" # Transitive Dioxus, reqwest, and platform stacks require incompatible versions.
+
+[workspace.lints.rust]
+# Compiler warnings are part of strict quality gate.
+unsafe_code = "deny"
+irrefutable_let_patterns = "deny"
+unused_must_use = "deny"
+non_ascii_idents = "deny"
+let_underscore_lock = "deny"
+unit_bindings = "deny"
+macro_use_extern_crate = "deny"
+unused_lifetimes = "deny"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "deny"
+invalid_html_tags = "deny"
+invalid_rust_codeblocks = "deny"
+bare_urls = "warn"
+unescaped_backticks = "warn"
+
+[features]
+default = ["web"]
+server = ["dioxus/server", "dep:reqwest", "dep:resend-rs", "dep:validator", "dep:tracing", "dep:tower-http", "dep:tokio", "dep:rusqlite"]
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
