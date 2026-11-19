@@ -6,7 +6,7 @@ exclude = ["crates/_starters/start-dioxus-fullstack", "crates/nrzui-cli", "crate
 
 [package]
 name = "nrzui-dioxus"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["nicorenezweers"]
 edition = "2024"
 publish = false

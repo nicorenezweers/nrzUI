@@ -5,33 +5,32 @@
 *.ico binary
 *.icns binary
 
-# Drittanbieter-Bibliotheken
-public/cdn/** linguist-vendored
-leptos-ui/public/cdn/** linguist-vendored
-public/app_components/** linguist-vendored
-leptos-ui/public/app_components/** linguist-vendored
-**/Animate.css linguist-vendored
+# Drittanbieter-Bibliotheken und Browser-Hilfsskripte
+public/** linguist-vendored=true
+leptos-ui/public/** linguist-vendored=true
+**/Animate.css linguist-vendored=true
 
 # Generierte Dateien
-assets/tailwind.css linguist-generated
-Cargo.lock linguist-generated
-**/Cargo.lock linguist-generated
+assets/** linguist-generated=true
+Cargo.lock linguist-generated=true
+**/Cargo.lock linguist-generated=true
 
 # Playwright-E2E-Suiten (Test-Harness, nicht Teil der Bibliothek)
-e2e/** linguist-vendored
-leptos-ui/e2e/** linguist-vendored
+e2e/** linguist-vendored=true
+leptos-ui/e2e/** linguist-vendored=true
 
 # Styles, Build-, Plattform- und Hilfsdateien
-*.css linguist-detectable=false
-*.ts linguist-detectable=false
-*.js linguist-detectable=false
-*.mjs linguist-detectable=false
-*.html linguist-detectable=false
-*.sh linguist-detectable=false
-*.m linguist-detectable=false
-*.sql linguist-detectable=false
-justfile linguist-detectable=false
-**/justfile linguist-detectable=false
-Dockerfile linguist-detectable=false
-**/Dockerfile linguist-detectable=false
-.githooks/** linguist-detectable=false
+*.css linguist-vendored=true linguist-detectable=false
+*.ts linguist-vendored=true linguist-detectable=false
+*.js linguist-vendored=true linguist-detectable=false
+*.mjs linguist-vendored=true linguist-detectable=false
+*.html linguist-vendored=true linguist-detectable=false
+*.sh linguist-vendored=true linguist-detectable=false
+*.m linguist-vendored=true linguist-detectable=false
+*.sql linguist-vendored=true linguist-detectable=false
+*.conf linguist-vendored=true linguist-detectable=false
+justfile linguist-vendored=true linguist-detectable=false
+**/justfile linguist-vendored=true linguist-detectable=false
+Dockerfile linguist-vendored=true linguist-detectable=false
+**/Dockerfile linguist-vendored=true linguist-detectable=false
+.githooks/** linguist-vendored=true linguist-detectable=false

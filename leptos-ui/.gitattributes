@@ -1,1 +1,4 @@
 e2e/** linguist-vendored=true
+*.ts linguist-vendored=true
+*.js linguist-vendored=true
+*.css linguist-vendored=true
