@@ -79,7 +79,7 @@ mod tests {
     #[test]
     fn test_www_detection() {
         let hosts =
-            [("leptos.ui.zweers.ch", true), ("leptos.ui.zweers.ch", false), ("www.example.com", true), ("example.com", false)];
+            [("www.leptos.ui.zweers.ch", true), ("leptos.ui.zweers.ch", false), ("www.example.com", true), ("example.com", false)];
 
         for (host, should_strip) in hosts {
             let has_www = host.starts_with("www.");

@@ -6,7 +6,7 @@ exclude = ["crates/_starters/start-dioxus-fullstack", "crates/nrzui-cli", "crate
 
 [package]
 name = "nrzui-dioxus"
-version = "1.0.2"
+version = "1.1.0"
 authors = ["nicorenezweers"]
 edition = "2024"
 publish = false
@@ -56,8 +56,8 @@ app_config = { path = "app_crates/app_config" }
 app_domain = { path = "app_crates/app_domain" }
 app_routes = { path = "app_crates/app_routes" }
 
-icons = { path = "crates/icons", version = "0.19", features = ["dioxus", "dioxus_animated"] }
-tw_merge = { path = "crates/tw_merge/tw_merge", version = "0.1", features = ["debug"] }
+icons = { path = "crates/icons", version = "1.0", features = ["dioxus", "dioxus_animated"] }
+tw_merge = { path = "crates/tw_merge/tw_merge", version = "1.0", features = ["debug"] }
 heck = "0.5"
 strum = { version = "0.28", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }
@@ -65,7 +65,7 @@ serde_json = "1"
 time = { version = "0.3", features = ["serde", "wasm-bindgen"] }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 resend-rs = { version = "0.35", default-features = false, features = ["rustls-tls"] }
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "0.43", features = ["bundled"] }
 validator = { version = "0.21", features = ["derive"] }
 tracing = "0.1"
 tower-http = { version = "0.7", features = ["fs"] }

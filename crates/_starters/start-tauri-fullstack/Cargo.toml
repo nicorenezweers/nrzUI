@@ -21,7 +21,7 @@ log = "0.4"
 tw_merge = { version = "0.1", features = ["variant", "debug"]}
 serde = { version = "1", features = ["derive"] }
 struct_field_names = "0.1"
-sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "macros", "uuid", "time", "json"] }
+sqlx = { version = "0.9", features = ["runtime-tokio", "tls-rustls-ring-webpki", "postgres", "macros", "uuid", "time", "json"] }
 strum = { version = "0.27", features = ["derive"] }
 strum_macros = "0.27"
 thiserror = "2"

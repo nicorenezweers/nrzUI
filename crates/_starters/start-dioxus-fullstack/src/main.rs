@@ -15,17 +15,22 @@ fn main() {
     #[cfg(feature = "server")]
     dioxus::serve(|| async {
         use dioxus::server::axum::Extension;
-        use sqlx::postgres::PgPoolOptions;
+        use sqlx::ConnectOptions;
+        use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 
         dotenv::dotenv().ok();
 
         let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
+        let connect_options = database_url
+            .parse::<PgConnectOptions>()
+            .expect("Invalid DATABASE_URL")
+            .log_statements(log::LevelFilter::Off)
+            .log_slow_statements(log::LevelFilter::Warn, std::time::Duration::from_millis(100));
+
         let pool = PgPoolOptions::new()
             .max_connections(5)
-            .log_statements(log::LevelFilter::Off)
-            .log_slow_statements(log::LevelFilter::Warn, std::time::Duration::from_millis(100))
-            .connect(&database_url)
+            .connect_with(connect_options)
             .await
             .expect("Failed to connect to database");
 

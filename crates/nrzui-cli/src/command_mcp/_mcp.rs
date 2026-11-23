@@ -3,7 +3,7 @@ use dialoguer::Select;
 use rmcp::{
     ServerHandler, ServiceExt,
     handler::server::{router::tool::ToolRouter, wrapper::Parameters},
-    model::{ServerCapabilities, ServerInfo},
+    model::{ServerCapabilities, ServerConfig},
     tool, tool_handler, tool_router,
 };
 use schemars::JsonSchema;
@@ -146,8 +146,8 @@ impl RustUiMcpServer {
 
 #[tool_handler(router = self.tool_router)]
 impl ServerHandler for RustUiMcpServer {
-    fn get_info(&self) -> ServerInfo {
-        ServerInfo::new(ServerCapabilities::builder().enable_tools().build()).with_instructions(
+    fn get_info(&self) -> ServerConfig {
+        ServerConfig::new(ServerCapabilities::builder().enable_tools().build()).with_instructions(
             "nrzui component registry. Use list_components to browse, \
              search_components to find, view_component to inspect source, \
              get_add_command to get the install command, \
